@@ -7,6 +7,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void toast(String text) {
+        Toast.makeText(this,text, Toast.LENGTH_LONG).show();
     }
 
     private void vibrate() {
