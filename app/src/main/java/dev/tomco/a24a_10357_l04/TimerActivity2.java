@@ -1,31 +1,27 @@
 package dev.tomco.a24a_10357_l04;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
 
-public class TimerActivity1 extends AppCompatActivity {
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class TimerActivity2 extends AppCompatActivity {
 
     private ExtendedFloatingActionButton time_FAB_start;
     private ExtendedFloatingActionButton time_FAB_stop;
     private MaterialTextView timer_LBL_time;
     private static final long DELAY = 1000;
-    final Handler handler = new Handler();
     private long startTime;
     private boolean timerOn = false;
+    private Timer timer;
 
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            handler.postDelayed(this, DELAY);
-            updateTimerUI();
-        }
-    };
 
     private void updateTimerUI() {
         Log.d("Current Time", "" + System.currentTimeMillis());
@@ -58,14 +54,20 @@ public class TimerActivity1 extends AppCompatActivity {
 
     private void stopTimer() {
         timerOn = false;
-        handler.removeCallbacks(runnable);
+        timer.cancel();
     }
 
     private void startTimer() {
         if (!timerOn) {
             timerOn = true;
             startTime = System.currentTimeMillis();
-            handler.postDelayed(runnable, 0);
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(() -> updateTimerUI());
+                }
+            }, 0, DELAY);
         }
     }
 

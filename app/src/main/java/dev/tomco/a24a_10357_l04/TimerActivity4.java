@@ -1,31 +1,30 @@
 package dev.tomco.a24a_10357_l04;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.CountDownTimer;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.Worker;
 
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
 
-public class TimerActivity1 extends AppCompatActivity {
+import java.util.concurrent.TimeUnit;
+
+public class TimerActivity4 extends AppCompatActivity {
 
     private ExtendedFloatingActionButton time_FAB_start;
     private ExtendedFloatingActionButton time_FAB_stop;
     private MaterialTextView timer_LBL_time;
     private static final long DELAY = 1000;
-    final Handler handler = new Handler();
     private long startTime;
     private boolean timerOn = false;
 
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            handler.postDelayed(this, DELAY);
-            updateTimerUI();
-        }
-    };
+
 
     private void updateTimerUI() {
         Log.d("Current Time", "" + System.currentTimeMillis());
@@ -58,14 +57,15 @@ public class TimerActivity1 extends AppCompatActivity {
 
     private void stopTimer() {
         timerOn = false;
-        handler.removeCallbacks(runnable);
+        WorkManager.getInstance(this).cancelAllWork();
     }
 
     private void startTimer() {
         if (!timerOn) {
             timerOn = true;
             startTime = System.currentTimeMillis();
-            handler.postDelayed(runnable, 0);
+            WorkManager.getInstance(this).enqueue(new PeriodicWorkRequest.Builder(PeriodicWorker.class,1, TimeUnit.SECONDS)
+                    .build());
         }
     }
 
